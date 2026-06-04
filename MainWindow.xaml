@@ -40,7 +40,7 @@
 					<Button Grid.Row="0" Grid.Column="0" Margin="4" Click="LoadFromFile_Click">Załaduj z pliku</Button>
 					<TextBlock Name="Filename" Text="przykład.txt" Grid.Row="0" Grid.Column="1" Margin="4" />
 					<Button Grid.Row="0" Grid.Column="2" Margin="4" Click="Open_Click">Otwórz</Button>
-					<TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="4" Name="PreviewText" TextWrapping="NoWrap" Text="..." />
+					<TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="4" Name="PreviewText" TextWrapping="NoWrap" AcceptsReturn="True" Text="..." />
 				</Grid>
 			</TabItem>
 

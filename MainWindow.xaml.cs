@@ -1,7 +1,6 @@
 using Microsoft.Win32;
 using System.IO;
 using System.Windows;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace etg {
 	public partial class MainWindow: Window {
