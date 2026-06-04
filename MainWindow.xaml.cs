@@ -41,4 +41,6 @@ namespace etg {
 			}
 		}
 	}
+
+	// test commita w Visual studio
 }
