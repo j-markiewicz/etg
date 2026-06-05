@@ -18,7 +18,7 @@ Przy ładowaniu grafu z pliku program oczekuje, że dane są w poniższym formac
 
 ```txt
 @tasks [ilość zadań (N)]
-[typ/indeks] [ilość wymaganych zadań] [indeks wymagania 1] [indeks wymagania 2] [...] [indeks wymagania n]
+[typ/indeks] [ilość następników] [indeks następnika 1] [indeks następnika 2] [...] [indeks następnika n]
 [...]
 @proc [ilość procesów (M)]
 [szybkość] [typ]
