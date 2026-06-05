@@ -148,7 +148,26 @@ namespace etg
 
             try
             {
-                IScheduler scheduler = new ListScheduler();
+                IScheduler scheduler;
+
+                switch (SchedulerComboBox.SelectedIndex)
+                {
+                    case 0:
+                        scheduler = new BasicListScheduler();
+                        break;
+
+                    case 1:
+                        scheduler = new EtgScheduler();
+                        break;
+
+                    case 2:
+                        scheduler = new HeftScheduler();
+                        break;
+
+                    default:
+                        scheduler = new EtgScheduler();
+                        break;
+                }
                 var result = scheduler.Schedule(Graph);
 
                 ScheduleResult = result;
