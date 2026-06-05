@@ -21,7 +21,6 @@
             
         public int TaskIndex { get; set; }
 
-        // NOWE
         public List<int> ProcIndices { get; set; } = [];
 
         public int StartTime { get; set; }
