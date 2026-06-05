@@ -18,10 +18,10 @@ Przy ładowaniu grafu z pliku program oczekuje, że dane są w poniższym formac
 
 ```txt
 @tasks [ilość zadań (N)]
-[nazwa] [typ?] [wymagania?]
+[typ/indeks] [ilość wymaganych zadań] [indeks wymagania 1] [indeks wymagania 2] [...] [indeks wymagania n]
 [...]
 @proc [ilość procesów (M)]
-[nazwa?] [?] [typ?]
+[szybkość] [typ]
 [...]
 @times
 [macierz czasów N×M]
@@ -33,21 +33,21 @@ Na przykład:
 
 ```txt
 @tasks 10
-GT0 2 1(0) 2(0)
-GT1 2 3(0) 5(0)
-UT2 3 9(0) 4(0) 6(0)
-CDT3 2 7(0) 9(0)
-CGT4 1 8(0)
-GT5 1 9(0)
+GT0 2 1 2
+GT1 2 3 5
+UT2 3 9 4 6
+CDT3 2 7 9
+CGT4 1 8
+GT5 1 9
 CGT6 0
 CGT7 0
 DT8 0
 CGT9 0
 @proc 4
-100 0 1
-200 0 1
-500 0 0
-300 0 0
+100 1
+200 1
+500 0
+300 0
 @times
 30 10 3 4
 50 20 6 5
