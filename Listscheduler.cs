@@ -55,40 +55,173 @@
                     earliestStart = Math.Max(earliestStart, taskEndTime[pred]);
                 }
 
-                // Znajdź procesor z najwcześniejszym czasem zakończenia
-                int bestProc = -1;
-                int bestFinish = int.MaxValue;
+                List<int> candidateProcessors;
 
-                for (int p = 0; p < procCount; p++)
+                switch (task.TaskType)
                 {
-                    int start = Math.Max(earliestStart, procFreeAt[p]);
-                    int duration = graph.Times[ti][p];
-                    int finish = start + duration;
+                    case TaskType.DT:
+                    case TaskType.CDT:
+                        candidateProcessors = GetSpecializedProcessors(graph);
+                        break;
 
-                    if (finish < bestFinish)
-                    {
-                        bestFinish = finish;
-                        bestProc = p;
-                    }
+                    case TaskType.UT:
+                        candidateProcessors = GetGeneralProcessors(graph);
+                        break;
+
+                    case TaskType.GT:
+                    case TaskType.CGT:
+                    default:
+                        candidateProcessors = Enumerable.Range(0, procCount).ToList();
+                        break;
                 }
 
-                int actualStart = Math.Max(earliestStart, procFreeAt[bestProc]);
-                int actualDuration = graph.Times[ti][bestProc];
-                int actualCost = graph.Costs[ti][bestProc];
-
-                procFreeAt[bestProc] = actualStart + actualDuration;
-                taskEndTime[ti] = actualStart + actualDuration;
-
-                result.ScheduledTasks.Add(new ScheduledTask
+                if (task.TaskType == TaskType.GT || task.TaskType == TaskType.DT || task.TaskType == TaskType.UT)
                 {
-                    Task = task,
-                    TaskIndex = ti,
-                    ProcIndex = bestProc,
-                    StartTime = actualStart,
-                    EndTime = actualStart + actualDuration,
-                    Duration = actualDuration,
-                    Cost = actualCost,
-                });
+                    int bestProc = -1;
+                    int bestFinish = int.MaxValue;
+
+                    foreach (var p in candidateProcessors)
+                    {
+                        int start = Math.Max(
+                            earliestStart,
+                            procFreeAt[p]);
+
+                        int duration = graph.Times[ti][p];
+                        int finish = start + duration;
+
+                        if (finish < bestFinish)
+                        {
+                            bestFinish = finish;
+                            bestProc = p;
+                        }
+                    }
+
+                    if (bestProc == -1)
+                    {
+                        throw new InvalidOperationException($"Brak dostępnego procesora dla zadania {task.Name}");
+                    }
+
+                    int actualStart = Math.Max(earliestStart, procFreeAt[bestProc]);
+
+                    int actualDuration = graph.Times[ti][bestProc];
+
+                    int actualCost = graph.Costs[ti][bestProc];
+
+                    procFreeAt[bestProc] = actualStart + actualDuration;
+
+                    taskEndTime[ti] = actualStart + actualDuration;
+
+                    result.ScheduledTasks.Add(
+                        new ScheduledTask
+                        {
+                            Task = task,
+                            TaskIndex = ti,
+
+                            ProcIndices = [bestProc],
+
+                            StartTime = actualStart,
+                            EndTime = actualStart + actualDuration,
+                            Duration = actualDuration,
+                            Cost = actualCost
+                        });
+                }
+
+                else if (task.TaskType == TaskType.CDT)
+                {
+                    if (candidateProcessors.Count == 0)
+                    {
+                        throw new InvalidOperationException(
+                            $"Brak procesorów specjalizowanych dla {task.Name}");
+                    }
+
+                    int start = earliestStart;
+
+                    foreach (var p in candidateProcessors)
+                    {
+                        start = Math.Max(
+                            start,
+                            procFreeAt[p]);
+                    }
+
+                    int duration =
+                        candidateProcessors
+                            .Select(p => graph.Times[ti][p])
+                            .Max();
+
+                    int cost =
+                        candidateProcessors
+                            .Sum(p => graph.Costs[ti][p]);
+
+                    int finish = start + duration;
+
+                    foreach (var p in candidateProcessors)
+                    {
+                        procFreeAt[p] = finish;
+                    }
+
+                    taskEndTime[ti] = finish;
+
+                    result.ScheduledTasks.Add(
+                        new ScheduledTask
+                        {
+                            Task = task,
+                            TaskIndex = ti,
+
+                            ProcIndices =
+                                candidateProcessors,
+
+                            StartTime = start,
+                            EndTime = finish,
+                            Duration = duration,
+                            Cost = cost
+                        });
+                }
+
+                else if (task.TaskType == TaskType.CGT)
+                {
+                    int start = earliestStart;
+
+                    foreach (var p in candidateProcessors)
+                    {
+                        start = Math.Max(
+                            start,
+                            procFreeAt[p]);
+                    }
+
+                    int duration =
+                        candidateProcessors
+                            .Select(p => graph.Times[ti][p])
+                            .Max();
+
+                    int cost =
+                        candidateProcessors
+                            .Sum(p => graph.Costs[ti][p]);
+
+                    int finish = start + duration;
+
+                    foreach (var p in candidateProcessors)
+                    {
+                        procFreeAt[p] = finish;
+                    }
+
+                    taskEndTime[ti] = finish;
+
+                    result.ScheduledTasks.Add(
+                        new ScheduledTask
+                        {
+                            Task = task,
+                            TaskIndex = ti,
+
+                            ProcIndices =
+                                candidateProcessors,
+
+                            StartTime = start,
+                            EndTime = finish,
+                            Duration = duration,
+                            Cost = cost
+                        });
+                }
+
             }
 
             return result;
@@ -142,5 +275,30 @@
 
             return order;
         }
+
+        private static bool IsSpecialized(Proc proc)
+        {
+            return proc.Specialized == 1;
+        }
+
+        private static List<int> GetSpecializedProcessors(Graph graph)
+        {
+            return graph.Procs
+                .Select((p, i) => new { p, i })
+                .Where(x => x.p.Specialized == 1)
+                .Select(x => x.i)
+                .ToList();
+        }
+
+        private static List<int> GetGeneralProcessors(Graph graph)
+        {
+            return graph.Procs
+                .Select((p, i) => new { p, i })
+                .Where(x => x.p.Specialized == 0)
+                .Select(x => x.i)
+                .ToList();
+        }
+
+
     }
 }

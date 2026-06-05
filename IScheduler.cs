@@ -18,17 +18,22 @@
     public class ScheduledTask
     {
         public Task Task { get; set; } = null!;
+            
         public int TaskIndex { get; set; }
-        public int ProcIndex { get; set; }
+
+        // NOWE
+        public List<int> ProcIndices { get; set; } = [];
+
         public int StartTime { get; set; }
         public int EndTime { get; set; }
         public int Duration { get; set; }
+
         public int Cost { get; set; }
     }
 
 
     /// Interfejs schedulera — podmień implementację na inny algorytm.
-    
+
     public interface IScheduler
     {
         string Name { get; }
