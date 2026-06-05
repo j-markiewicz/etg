@@ -153,14 +153,10 @@ namespace etg
                 switch (SchedulerComboBox.SelectedIndex)
                 {
                     case 0:
-                        scheduler = new BasicListScheduler();
-                        break;
-
-                    case 1:
                         scheduler = new EtgScheduler();
                         break;
 
-                    case 2:
+                    case 1:
                         scheduler = new HeftScheduler();
                         break;
 

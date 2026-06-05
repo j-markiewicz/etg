@@ -98,7 +98,6 @@
                                 Margin="4"
                                 SelectedIndex="1">
 
-                            <ComboBoxItem>List Scheduling</ComboBoxItem>
                             <ComboBoxItem>ETG Scheduling</ComboBoxItem>
                             <ComboBoxItem>HEFT Scheduling</ComboBoxItem>
 
