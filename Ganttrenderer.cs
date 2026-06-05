@@ -6,7 +6,6 @@ using System.Windows.Shapes;
 // to tylko rysuje wykres
 
 
-
 namespace etg
 {
     public static class GanttRenderer
@@ -183,13 +182,7 @@ namespace etg
         }
 
 
-        private static void DrawTaskBlock(
-    Canvas canvas,
-    ScheduledTask st,
-    double x,
-    double width,
-    double rowY,
-    Color color)
+        private static void DrawTaskBlock(Canvas canvas, ScheduledTask st, double x, double width, double rowY, Color color)
         {
             var rect = new Rectangle
             {
@@ -226,8 +219,7 @@ namespace etg
                 TextAlignment = TextAlignment.Center
             };
 
-            taskLabel.Measure(
-                new Size(width, RowHeight));
+            taskLabel.Measure(new Size(width, RowHeight));
 
             if (taskLabel.DesiredSize.Width < width - 4)
             {
