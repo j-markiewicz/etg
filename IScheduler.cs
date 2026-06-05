@@ -11,6 +11,8 @@
     public class ScheduleResult
     {
         public List<ScheduledTask> ScheduledTasks { get; set; } = [];
+
+        public List<string> Warnings { get; set; } = [];
         public int Makespan => ScheduledTasks.Count > 0 ? ScheduledTasks.Max(t => t.EndTime) : 0;
         public int TotalCost => ScheduledTasks.Sum(t => t.Cost);
     }
@@ -18,17 +20,21 @@
     public class ScheduledTask
     {
         public Task Task { get; set; } = null!;
+            
         public int TaskIndex { get; set; }
-        public int ProcIndex { get; set; }
+
+        public List<int> ProcIndices { get; set; } = [];
+
         public int StartTime { get; set; }
         public int EndTime { get; set; }
         public int Duration { get; set; }
+
         public int Cost { get; set; }
     }
 
 
     /// Interfejs schedulera — podmień implementację na inny algorytm.
-    
+
     public interface IScheduler
     {
         string Name { get; }

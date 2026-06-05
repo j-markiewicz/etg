@@ -85,8 +85,33 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0 0 0 4">
-                        <Button Margin="4" Click="Schedule_Click" IsEnabled="False" Name="ScheduleButton">Szereguj</Button>
+                    <StackPanel Grid.Row="0"
+                                Orientation="Horizontal"
+                                Margin="0 0 0 4">
+
+                        <TextBlock Text="Algorytm:"
+                                   VerticalAlignment="Center"
+                                   Margin="4"/>
+
+                        <ComboBox Name="SchedulerComboBox"
+                                Width="180"
+                                Margin="4"
+                                SelectedIndex="1">
+
+                            <ComboBoxItem>ETG Scheduling</ComboBoxItem>
+                            <ComboBoxItem>HEFT Scheduling</ComboBoxItem>
+
+                        </ComboBox>
+
+                        <Button Margin="4"
+                                Click="Schedule_Click"
+                                IsEnabled="False"
+                                Name="ScheduleButton">
+
+                            Szereguj
+
+                        </Button>
+
                     </StackPanel>
 
                     <Border Grid.Row="1" BorderBrush="#CCCCCC" BorderThickness="1" CornerRadius="4">

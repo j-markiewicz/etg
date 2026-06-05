@@ -148,10 +148,35 @@ namespace etg
 
             try
             {
-                IScheduler scheduler = new ListScheduler();
+                IScheduler scheduler;
+
+                switch (SchedulerComboBox.SelectedIndex)
+                {
+                    case 0:
+                        scheduler = new EtgScheduler();
+                        break;
+
+                    case 1:
+                        scheduler = new HeftScheduler();
+                        break;
+
+                    default:
+                        scheduler = new EtgScheduler();
+                        break;
+                }
                 var result = scheduler.Schedule(Graph);
 
                 ScheduleResult = result;
+
+                if (result.Warnings.Any())
+                {
+                    MessageBox.Show(
+                        string.Join("\n\n", result.Warnings),
+                        "Ostrzeżenia",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                }
+
                 GanttTab.IsEnabled = true;
                 GanttRenderer.Draw(GanttCanvas, Graph, result);
                 GanttTab.Focus();

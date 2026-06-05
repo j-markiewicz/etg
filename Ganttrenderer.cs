@@ -6,7 +6,6 @@ using System.Windows.Shapes;
 // to tylko rysuje wykres
 
 
-
 namespace etg
 {
     public static class GanttRenderer
@@ -93,67 +92,34 @@ namespace etg
                 canvas.Children.Add(bg);
             }
 
-            //  Bloki zadań
+            // Bloki zadań
             foreach (var st in result.ScheduledTasks)
             {
-                double rowY = PaddingTop + st.ProcIndex * (RowHeight + RowSpacing);
                 double x = chartStartX + st.StartTime * scale;
                 double width = st.Duration * scale;
 
-                var color = TaskColors.GetValueOrDefault(st.Task.TaskType, Colors.Gray);
+                var color =
+                    TaskColors.GetValueOrDefault(
+                        st.Task.TaskType,
+                        Colors.Gray);
 
-                // Prostokąt zadania
-                var rect = new Rectangle
+                foreach (var proc in st.ProcIndices)
                 {
-                    Width = Math.Max(width - 2, 1),
-                    Height = RowHeight - 6,
-                    RadiusX = 4,
-                    RadiusY = 4,
-                    Fill = new SolidColorBrush(color),
-                    Stroke = new SolidColorBrush(DarkenColor(color, 0.3)),
-                    StrokeThickness = 1,
-                };
-                Canvas.SetLeft(rect, x + 1);
-                Canvas.SetTop(rect, rowY + 3);
-                canvas.Children.Add(rect);
+                    double rowY =
+                        PaddingTop +
+                        proc * (RowHeight + RowSpacing);
 
-                // Nazwa zadania
-                var taskLabel = new TextBlock
-                {
-                    Text = st.Task.Name,
-                    Foreground = Brushes.White,
-                    FontWeight = FontWeights.Bold,
-                    FontSize = 11,
-                    TextAlignment = TextAlignment.Center,
-                };
-                taskLabel.Measure(new Size(width, RowHeight));
-
-                if (taskLabel.DesiredSize.Width < width - 4)
-                {
-                    Canvas.SetLeft(taskLabel, x + (width - taskLabel.DesiredSize.Width) / 2);
-                    Canvas.SetTop(taskLabel, rowY + (RowHeight - taskLabel.DesiredSize.Height) / 2 - 6);
-                    canvas.Children.Add(taskLabel);
-                }
-
-                // Czas (pod nazwą)
-                var timeLabel = new TextBlock
-                {
-                    Text = $"{st.StartTime}-{st.EndTime}",
-                    Foreground = new SolidColorBrush(Color.FromRgb(0xFF, 0xFF, 0xDD)),
-                    FontSize = 9,
-                    TextAlignment = TextAlignment.Center,
-                };
-                timeLabel.Measure(new Size(width, RowHeight));
-
-                if (timeLabel.DesiredSize.Width < width - 4)
-                {
-                    Canvas.SetLeft(timeLabel, x + (width - timeLabel.DesiredSize.Width) / 2);
-                    Canvas.SetTop(timeLabel, rowY + (RowHeight - timeLabel.DesiredSize.Height) / 2 + 8);
-                    canvas.Children.Add(timeLabel);
+                    DrawTaskBlock(
+                        canvas,
+                        st,
+                        x,
+                        width,
+                        rowY,
+                        color);
                 }
             }
 
-            
+
             DrawSummary(canvas, result, PaddingTop + procCount * (RowHeight + RowSpacing) + 10, chartStartX);
         }
 
@@ -214,6 +180,94 @@ namespace etg
             Canvas.SetTop(summary, y);
             canvas.Children.Add(summary);
         }
+
+
+        private static void DrawTaskBlock(Canvas canvas, ScheduledTask st, double x, double width, double rowY, Color color)
+        {
+            var rect = new Rectangle
+            {
+                Width = Math.Max(width - 2, 1),
+                Height = RowHeight - 6,
+
+                RadiusX = 4,
+                RadiusY = 4,
+
+                Fill = new SolidColorBrush(color),
+
+                Stroke =
+                    new SolidColorBrush(
+                        DarkenColor(color, 0.3)),
+
+                StrokeThickness = 1
+            };
+
+            Canvas.SetLeft(rect, x + 1);
+            Canvas.SetTop(rect, rowY + 3);
+
+            canvas.Children.Add(rect);
+
+            var taskLabel = new TextBlock
+            {
+                Text = st.Task.Name,
+
+                Foreground = Brushes.White,
+
+                FontWeight = FontWeights.Bold,
+
+                FontSize = 11,
+
+                TextAlignment = TextAlignment.Center
+            };
+
+            taskLabel.Measure(new Size(width, RowHeight));
+
+            if (taskLabel.DesiredSize.Width < width - 4)
+            {
+                Canvas.SetLeft(
+                    taskLabel,
+                    x + (width - taskLabel.DesiredSize.Width) / 2);
+
+                Canvas.SetTop(
+                    taskLabel,
+                    rowY +
+                    (RowHeight - taskLabel.DesiredSize.Height) / 2 - 6);
+
+                canvas.Children.Add(taskLabel);
+            }
+
+            var timeLabel = new TextBlock
+            {
+                Text = $"{st.StartTime}-{st.EndTime}",
+
+                Foreground =
+                    new SolidColorBrush(
+                        Color.FromRgb(255, 255, 220)),
+
+                FontSize = 9,
+
+                TextAlignment = TextAlignment.Center
+            };
+
+            timeLabel.Measure(
+                new Size(width, RowHeight));
+
+            if (timeLabel.DesiredSize.Width < width - 4)
+            {
+                Canvas.SetLeft(
+                    timeLabel,
+                    x + (width - timeLabel.DesiredSize.Width) / 2);
+
+                Canvas.SetTop(
+                    timeLabel,
+                    rowY +
+                    (RowHeight - timeLabel.DesiredSize.Height) / 2 + 8);
+
+                canvas.Children.Add(timeLabel);
+            }
+        }
+
+
+
 
         private static Color DarkenColor(Color color, double factor)
         {

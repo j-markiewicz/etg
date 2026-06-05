@@ -1,12 +1,16 @@
-﻿namespace etg
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace etg
 {
-    
+
     // tu jest algorytm sortowania, jak na razie jest prosty, bo wybiera z najktrótszym czasem zakonczenia
     // ignoruje koszt, więc to będzie do poprawy(raczej nie) albo
     //  do wyrzucenia w ostateczniej wersji (pewniej)
-    
 
-    public class ListScheduler : IScheduler
+
+    public class BasicListScheduler : IScheduler
     {
         public string Name => "List Scheduling";
 
@@ -83,7 +87,7 @@
                 {
                     Task = task,
                     TaskIndex = ti,
-                    ProcIndex = bestProc,
+                    ProcIndices = [bestProc],
                     StartTime = actualStart,
                     EndTime = actualStart + actualDuration,
                     Duration = actualDuration,
@@ -94,7 +98,7 @@
             return result;
         }
 
-       
+
         private static List<int> TopologicalSort(int taskCount, List<List<int>> predecessors, Graph graph)
         {
             // Oblicz liczbę poprzedników 
