@@ -13,6 +13,8 @@ namespace etg
 
         public ScheduleResult Schedule(Graph graph)
         {
+            var missingSpecializedTasks = new List<string>();
+            var missingGeneralTasks = new List<string>();
             var result = new ScheduleResult();
             var taskCount = graph.Tasks.Count;
             var procCount = graph.Procs.Count;
@@ -67,11 +69,30 @@ namespace etg
                 {
                     case TaskType.DT:
                     case TaskType.CDT:
+
                         candidateProcessors = GetSpecializedProcessors(graph);
+
+                        if (candidateProcessors.Count == 0)
+                        {
+                            candidateProcessors =
+                                Enumerable.Range(0, procCount).ToList();
+
+                            missingSpecializedTasks.Add(task.Name);
+                        }
+
                         break;
 
                     case TaskType.UT:
+
                         candidateProcessors = GetGeneralProcessors(graph);
+
+                        if (candidateProcessors.Count == 0)
+                        {
+                            candidateProcessors = Enumerable.Range(0, procCount).ToList();
+
+                            missingGeneralTasks.Add(task.Name);
+                        }
+
                         break;
 
                     case TaskType.GT:
@@ -107,7 +128,7 @@ namespace etg
 
                     if (bestProc == -1)
                     {
-                        throw new InvalidOperationException($"Brak dostępnego procesora dla zadania {task.Name}");
+                        throw new InvalidOperationException($"Nie udało się przypisać procesora do zadania {task.Name}");
                     }
 
                     int actualStart = Math.Max(earliestStart, procFreeAt[bestProc]);
@@ -137,10 +158,6 @@ namespace etg
 
                 else if (task.TaskType == TaskType.CDT)
                 {
-                    if (candidateProcessors.Count == 0)
-                    {
-                        throw new InvalidOperationException($"Brak procesorów specjalizowanych dla {task.Name}");
-                    }
 
                     int start = earliestStart;
 
@@ -222,6 +239,17 @@ namespace etg
                         });
                 }
 
+            }
+
+
+            if (missingSpecializedTasks.Any())
+            {
+                result.Warnings.Add($"Zadania {string.Join(", ", missingSpecializedTasks)} wymagają procesora specjalizowanego, ale żaden nie istnieje. Zostaną wykonane na procesorach ogólnych.");
+            }
+
+            if (missingGeneralTasks.Any())
+            {
+                result.Warnings.Add($"Zadania {string.Join(", ", missingGeneralTasks)} wymagają procesora ogólnego, ale żaden nie istnieje. Zostaną wykonane na procesorach specjalizowanych.");
             }
 
             return result;

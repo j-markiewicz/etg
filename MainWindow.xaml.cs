@@ -167,6 +167,16 @@ namespace etg
                 var result = scheduler.Schedule(Graph);
 
                 ScheduleResult = result;
+
+                if (result.Warnings.Any())
+                {
+                    MessageBox.Show(
+                        string.Join("\n\n", result.Warnings),
+                        "Ostrzeżenia",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                }
+
                 GanttTab.IsEnabled = true;
                 GanttRenderer.Draw(GanttCanvas, Graph, result);
                 GanttTab.Focus();

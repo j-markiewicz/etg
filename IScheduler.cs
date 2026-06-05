@@ -11,6 +11,8 @@
     public class ScheduleResult
     {
         public List<ScheduledTask> ScheduledTasks { get; set; } = [];
+
+        public List<string> Warnings { get; set; } = [];
         public int Makespan => ScheduledTasks.Count > 0 ? ScheduledTasks.Max(t => t.EndTime) : 0;
         public int TotalCost => ScheduledTasks.Sum(t => t.Cost);
     }
