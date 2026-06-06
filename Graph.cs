@@ -124,7 +124,7 @@ namespace etg {
 				lastLine = line;
 				var speed = int.Parse(match.Groups["speed"].Value);
 				var specialized = int.Parse(match.Groups["type"].Value) != 0;
-				procs.Add(new Proc(speed, specialized));
+				procs.Add(new Proc(speed, specialized, i));
 			}
 
 			// @times
@@ -203,8 +203,9 @@ namespace etg {
 		public string Name { get => $"{Type}{Index}"; }
 	}
 
-	public class Proc(int speed, bool specialized) {
+	public class Proc(int speed, bool specialized, int index) {
 		public int Speed = speed;
+		public int Index = index;
 		public bool Specialized = specialized;
 	}
 }

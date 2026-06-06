@@ -141,6 +141,14 @@ namespace etg {
 						scheduler = new HeftScheduler();
 						break;
 
+					case 2:
+						scheduler = new GreedyTimeScheduler();
+						break;
+
+					case 3:
+						scheduler = new GreedyCostScheduler();
+						break;
+
 					default:
 						scheduler = new EtgScheduler();
 						break;
