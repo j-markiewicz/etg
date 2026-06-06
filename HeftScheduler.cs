@@ -123,8 +123,8 @@ namespace etg{
 						start = Math.Max(start, procFreeAt[p]);
 					}
 
-					int duration = candidateProcessors.Max(p => graph.Times[ti][p]);
-					int cost = candidateProcessors.Sum(p => graph.Costs[ti][p]);
+					int duration = ComputeParallelDuration(graph, ti, candidateProcessors);
+					int cost = ComputeParallelCost(graph, ti, candidateProcessors);
 					int finish = start + duration;
 
 					foreach (var p in candidateProcessors) {
@@ -175,7 +175,7 @@ namespace etg{
 					return avgTime;
 				}
 
-				double maxSucc = graph.Tasks[ti].Successors.Max(t => t.Index);
+				double maxSucc = graph.Tasks[ti].Successors.Max(t => Rank(t.Index));
 				ranks[ti] = avgTime + maxSucc;
 
 				return ranks[ti];
@@ -202,6 +202,18 @@ namespace etg{
 				.Where(x => !x.p.Specialized)
 				.Select(x => x.i)
 				.ToList();
+		}
+
+		private static int ComputeParallelDuration(Graph graph, int taskIndex, List<int> procIndices) {
+			return (int)MathF.Ceiling(
+				1 / procIndices.Sum(procIndex => 1 / (float)graph.Times[taskIndex][procIndex])
+			);
+		}
+
+		private static int ComputeParallelCost(Graph graph, int taskIndex, List<int> procIndices) {
+			return (int)MathF.Ceiling(
+				procIndices.Sum(procIndex => (float)graph.Costs[taskIndex][procIndex]) / procIndices.Count
+			);
 		}
 	}
 }

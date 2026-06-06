@@ -142,10 +142,14 @@ namespace etg {
 						break;
 
 					case 2:
-						scheduler = new GreedyTimeScheduler();
+						scheduler = new CpopScheduler();
 						break;
 
 					case 3:
+						scheduler = new GreedyTimeScheduler();
+						break;
+
+					case 4:
 						scheduler = new GreedyCostScheduler();
 						break;
 

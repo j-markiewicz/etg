@@ -99,7 +99,8 @@
 								SelectedIndex="1">
 
 							<ComboBoxItem>ETG Scheduling</ComboBoxItem>
-                            <ComboBoxItem>HEFT Scheduling</ComboBoxItem>
+							<ComboBoxItem>HEFT Scheduling</ComboBoxItem>
+                            <ComboBoxItem>CPOP Scheduling</ComboBoxItem>
                             <ComboBoxItem>Greedy (min. time)</ComboBoxItem>
                             <ComboBoxItem>Greedy (min. cost)</ComboBoxItem>
                         </ComboBox>
