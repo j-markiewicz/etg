@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-// to tylko rysuje wykres
+// rysowanie wykresu
 
 
 namespace etg {

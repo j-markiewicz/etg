@@ -1,9 +1,10 @@
+using System.Diagnostics;
+
 namespace etg
 {
 	
-	// tu jest algorytm sortowania, jak na razie jest prosty, bo wybiera z najktrótszym czasem zakonczenia
-	// ignoruje koszt, więc to będzie do poprawy(raczej nie) albo
-	//  do wyrzucenia w ostateczniej wersji (pewniej)
+	// algorytm sortowania wybiera z najktrótszym czasem zakonczenia
+	
 	
 
 	public class EtgScheduler : IScheduler
@@ -130,15 +131,19 @@ namespace etg
 						);
 					}
 
-					int duration = candidateProcessors.Max(p => graph.Times[ti][p]);
-					int cost = candidateProcessors.Sum(p => graph.Costs[ti][p]);
-					int finish = start + duration;
+  
+
+                    int duration = (int)MathF.Ceiling(1 / candidateProcessors.Sum( proc => 1 / (float)graph.Times[task.Index][proc] ));
+					int cost = (int)MathF.Ceiling(candidateProcessors.Sum(proc => (float)graph.Costs[task.Index][proc]) / candidateProcessors.Count);
+
+                    int finish = start + duration;
 
 					foreach (var p in candidateProcessors) {
 						procFreeAt[p] = finish;
 					}
 
 					taskEndTime[ti] = finish;
+
 
 					result.ScheduledTasks.Add(
 						new ScheduledTask {
@@ -153,6 +158,8 @@ namespace etg
 					);
 				}
 			}
+
+
 
 			if (missingSpecializedTasks.Any()) {
 				result.Warnings.Add($"Zadania {string.Join(", ", missingSpecializedTasks)} wymagają procesora specjalizowanego, ale żaden nie istnieje. Zostaną wykonane na procesorach ogólnych.");
